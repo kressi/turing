@@ -61,13 +61,17 @@ class TuringMachine:
         for t in self.__tapes:
             print t.show()
 
-    def step(self):
+    def step(self, debug=False):
         if self.__next == "":
             self.__next = "{0}-".format(self.__state)
             for t in self.__tapes:
                 self.__next += t.current()
+        if debug:
+            print self.__next
         if self.__next in self.__transitions:
             self.__stepCount += 1
+            if debug:
+                print self.__transitions[self.__next]
             trans = self.__transitions[self.__next].split("-")
             self.__state = trans[0]
             self.__next = "{0}-".format(self.__state)
