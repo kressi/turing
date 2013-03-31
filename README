@@ -23,5 +23,5 @@ turing.py test 00001000000
 starts turing machine with input
 
 turing.py new-config
-file 'new-config.conf' will be created (if it does not exist already) for config required parameters will be requested.
+file 'new-config.conf' will be created (if it does not exist yet) for config required parameters will be requested.
 transitions can be read from file or entered manually. format see turing1_trans_string.
