@@ -1,5 +1,7 @@
 from turing_machine import TuringMachine
-import sys, ast, os
+import sys
+import ast
+import os
 
 
 # ********************************
@@ -12,11 +14,12 @@ config["tapeCount"] = 2
 config["transitions"] = {'0-00':'0-00RN', '0-#0':'0-00RR'}
 config["tapesInput"] = ["00000", "000000"]
 
+
 def writeConfig(handle):
     # write config file from stdin
     config = {}
     config["tapeCount"] = int(input("number of tapes? "))
-#    config["initState"] = 1
+    #config["initState"] = 1
     config["transitions"] = {}
     if raw_input("from file? Y n ") == "n":
         trans_string = raw_input("transitions? ")
