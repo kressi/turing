@@ -55,10 +55,16 @@ if len(sys.argv) > 1:
 # run turing machine
 # ********************************
 t = TuringMachine(**config)
-t.show()
-# t.step(True) to list transition key and value of transitions
+print t
+
 while t.step():
     # next step with enter
     #raw_input()
-    t.show()
+    #print t
+    pass
+
+#print t
+print t.getCount('0')
+
+
 

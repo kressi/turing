@@ -38,9 +38,15 @@ class Tape:
         else:
             self.__current = Config.blank
         return self.__current
-        
+    
+    def getCount(self, string='0'):
+        count = self.__frontStack.count(string) + self.__endStack.count(string)
+        if string == self.__current:
+            count += 1
+        return count
+    
     def show(self):
-        return " ".join(self.__frontStack) + "[" + self.__current + "]" +(" ".join(self.__endStack)[::-1])
+        return (" ".join(self.__frontStack) or " ") + "[" + self.__current + "]" +(" ".join(self.__endStack)[::-1])
 
 
 class TuringMachine:
@@ -53,39 +59,42 @@ class TuringMachine:
         for t in tapesInput:
             self.__tapes.append(Tape(t))
         if tapeCount > len(self.__tapes):
-            for i in range(len(self.__tapes), tapeCount):
+            for _ in range(len(self.__tapes), tapeCount):
                 self.__tapes.append(Tape())
 
-    def show(self):
-        print "state: {s}  step: {c}".format(s=self.__state, c=self.__stepCount)
+    def __repr__(self):
+        representation = "state: {s}  step: {c}\n".format(s=self.__state, c=self.__stepCount)
         for t in self.__tapes:
-            print t.show()
+            representation += t.show()
+            representation += '\n'
+        return representation
 
-    def step(self, debug=False):
+    def getCount(self, string='0'):
+        count = []
+        for t in self.__tapes:
+            count.append(t.getCount(string))
+        return count
+
+    def step(self):
         if self.__next == "":
             self.__next = "{0}-".format(self.__state)
             for t in self.__tapes:
                 self.__next += t.current()
-        if debug:
-            print self.__next
         if self.__next in self.__transitions:
             self.__stepCount += 1
-            if debug:
-                print self.__transitions[self.__next]
             trans = self.__transitions[self.__next].split("-")
             self.__state = trans[0]
             self.__next = "{0}-".format(self.__state)
             values = trans[1][:len(trans[1])/2]
             directions = trans[1][len(trans[1])/2:]
-            for i in range(len(values)):
+            for i, tape in enumerate(self.__tapes):
                 if directions[i] == "R":
-                    self.__next += self.__tapes[i].right(values[i])
+                    self.__next += tape.right(values[i])
                 elif directions[i] == "L":
-                    self.__next += self.__tapes[i].left(values[i])
+                    self.__next += tape.left(values[i])
                 else:
-                    self.__next += self.__tapes[i].current(values[i])
+                    self.__next += tape.current(values[i])
             return True
-                
         else:
             return False
 
