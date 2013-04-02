@@ -65,4 +65,5 @@ while t.step():
 
 #print t
 print t.getCount('0')
+print "Steps: {0}".format(t.getStepCount())
 
