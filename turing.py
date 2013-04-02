@@ -66,5 +66,3 @@ while t.step():
 #print t
 print t.getCount('0')
 
-
-

@@ -46,8 +46,19 @@ class Tape:
         return count
     
     def show(self):
-        return (" ".join(self.__frontStack) or " ") + "[" + self.__current + "]" +(" ".join(self.__endStack)[::-1])
-
+        out = ""
+        if self.__frontStack:
+            for i, string in enumerate(self.__frontStack):
+                out += " " + string
+                if i == 15:
+                    break
+        out += "[" + self.__current + "]"
+        if self.__endStack:
+            for i, string in enumerate(self.__endStack[::-1]):
+                out += string + " "
+                if i == 15:
+                    break
+        return out
 
 class TuringMachine:
     def __init__(self, tapesInput=[""], initState=0, transitions={}, tapeCount=1):
@@ -74,6 +85,9 @@ class TuringMachine:
         for t in self.__tapes:
             count.append(t.getCount(string))
         return count
+
+    def getStepCount(self):
+        return self.__stepCount
 
     def step(self):
         if self.__next == "":
