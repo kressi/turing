@@ -1,54 +1,34 @@
 from turing_machine import TuringMachine
-import sys
 import ast
-import os
+import argparse
 
 
 # ********************************
 # prepare config 
 # ********************************
-config = {}
+parser = argparse.ArgumentParser(description='Execute a turing machine.')
+parser.add_argument('config',
+                    help='name of turing configuration')
+parser.add_argument('-s', '--step',
+                    action='store_true',
+                    help='step through with enter')
+parser.add_argument('-v', '--verbose',
+                    action='store_true',
+                    help='print every step')
+parser.add_argument('-t', '--tapes',
+                    help='content of tapes seperated by comma (e.g. 00000,10000)')
+    
+args = parser.parse_args()
+step = args.step
+verbose = args.verbose
 
-#default values
-config["tapeCount"] = 2
-config["transitions"] = {'0-00':'0-00RN', '0-#0':'0-00RR'}
-config["tapesInput"] = ["00000", "000000"]
+with open(args.config + ".conf", 'r') as config_f:
+    config = ast.literal_eval(config_f.read())
 
-
-def writeConfig(handle):
-    # write config file from stdin
-    config = {}
-    config["tapeCount"] = int(input("number of tapes? "))
-    #config["initState"] = 1
-    config["transitions"] = {}
-    if raw_input("from file? Y n ") == "n":
-        trans_string = raw_input("transitions? ")
-    else:
-        with open(raw_input("filename? "),'r') as trans_f:
-            trans_string = trans_f.read()
-    for trans in trans_string.split(","):
-        parts = trans.split(":")
-        config["transitions"][parts[0]] = parts[1]
-    if config:
-        handle.write(str(config))
-
-if len(sys.argv) > 1:
-    if sys.argv[1] + ".conf" in os.listdir(os.getcwd()):
-        # read config file
-        with open(sys.argv[1] + ".conf", 'r') as config_f:
-            config = ast.literal_eval(config_f.read())
-    else:
-        with open(sys.argv[1] + ".conf", 'w') as config_f:
-            writeConfig(config_f)
-    if len(sys.argv) > 2:
-        # read tapes input from argument values
-        config["tapesInput"] = []
-        for i in range(2,len(sys.argv)):
-            config["tapesInput"].append(sys.argv[i])
-    else:
-        # read tapes input from stdin
-        config["tapesInput"] = str(raw_input("content of tapes? ")).split(" ")
-
+if args.tapes:
+    config['tapesInput'] = args.tapes.split(',')
+else:
+    config['tapesInput'] = str(raw_input("content of tapes? ")).split(" ")
 
 
 # ********************************
@@ -59,11 +39,12 @@ print t
 
 while t.step():
     # next step with enter
-    #raw_input()
-    #print t
-    pass
+    if step:
+        input()
+    if verbose:
+        print t
 
-#print t
-print t.getCount('0')
+char = '0'
+print "{0} occurs {1} times".format(char, t.getCount(char))
 print "Steps: {0}".format(t.getStepCount())
 
