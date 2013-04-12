@@ -40,7 +40,7 @@ print t
 while t.step():
     # next step with enter
     if step:
-        input()
+        raw_input()
     if verbose:
         print t
 
