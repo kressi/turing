@@ -1,10 +1,8 @@
-class Config:
-    blank = "#"
+
+BLANK = "#"
 
 
 class Tape:
-    """Initial position on the leftmost element."""
-    
     def __init__(self, inputTape=""):
         self.__frontStack = []
         self.__endStack = []
@@ -14,7 +12,7 @@ class Tape:
         if self.__endStack:
             self.__current = self.__endStack.pop()
         else:
-            self.__current = Config.blank
+            self.__current = BLANK
             
     def current(self, *s):
         if s:
@@ -22,21 +20,21 @@ class Tape:
         return self.__current
         
     def left(self, s):
-        if self.__endStack or s != Config.blank:
+        if self.__endStack or s != BLANK:
             self.__endStack.append(s)
         if self.__frontStack:
             self.__current = self.__frontStack.pop()
         else:
-            self.__current = Config.blank
+            self.__current = BLANK
         return self.__current
         
     def right(self, s):
-        if self.__frontStack or s != Config.blank:
+        if self.__frontStack or s != BLANK:
             self.__frontStack.append(s)
         if self.__endStack:
             self.__current = self.__endStack.pop()
         else:
-            self.__current = Config.blank
+            self.__current = BLANK
         return self.__current
     
     def getCount(self, string='0'):
@@ -46,22 +44,14 @@ class Tape:
         return count
     
     def show(self):
-        out = ""
-        if self.__frontStack:
-            for i, string in enumerate(self.__frontStack):
-                out += " " + string
-                if i == 15:
-                    break
-        out += "[" + self.__current + "]"
-        if self.__endStack:
-            for i, string in enumerate(self.__endStack[::-1]):
-                out += string + " "
-                if i == 15:
-                    break
-        return out
+        return (" ".join(self.__frontStack[:15]) or " ") + "[" + self.__current + "]" + " ".join(self.__endStack[15::-1])
 
 class TuringMachine:
-    def __init__(self, tapesInput=[""], initState=0, transitions={}, tapeCount=1):
+    def __init__(self,
+                 tapesInput=[""],
+                 initState=0,
+                 transitions={},
+                 tapeCount=1):
         self.__state = initState
         self.__transitions = transitions
         self.__stepCount = 0L
@@ -99,15 +89,15 @@ class TuringMachine:
             trans = self.__transitions[self.__next].split("-")
             self.__state = trans[0]
             self.__next = "{0}-".format(self.__state)
-            values = trans[1][:len(trans[1])/2]
-            directions = trans[1][len(trans[1])/2:]
-            for i, tape in enumerate(self.__tapes):
-                if directions[i] == "R":
-                    self.__next += tape.right(values[i])
-                elif directions[i] == "L":
-                    self.__next += tape.left(values[i])
+            for tape, value, direction in zip(self.__tapes,
+                                              trans[1][:len(trans[1])/2],
+                                              trans[1][len(trans[1])/2:]):
+                if direction == "R":
+                    self.__next += tape.right(value)
+                elif direction == "L":
+                    self.__next += tape.left(value)
                 else:
-                    self.__next += tape.current(values[i])
+                    self.__next += tape.current(value)
             return True
         else:
             return False
